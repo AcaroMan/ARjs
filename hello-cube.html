@@ -147,7 +147,6 @@
 				//geometry1.position.y = -80;
 				//geometry1.position.x = -20;
 				//geometry1.position.z = 0;
-				geometry1.position.set(0, 1.25/2, 0)
 				let count = 0
 				setInterval(() => {
 					const texture = new THREE.TextureLoader().load("./images/textures/texture" + count + ".jpg");
@@ -163,6 +162,8 @@
 				//geometry1.rotation.y = 0.5;
 				markerRoot1.add(geometry1);
 			});
+			geometry1.position.set(0, 1.25/2, 0)
+
 			/*let material1 = new THREE.MeshNormalMaterial({
 				transparent: true,
 				opacity: 0.5,
