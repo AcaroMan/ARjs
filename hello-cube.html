@@ -63,7 +63,6 @@
 			const container = document.getElementById('container');
 			scene = new THREE.Scene();
 			const loader = new THREE.GLTFLoader();
-			console.log(loader)
 			let ambientLight = new THREE.AmbientLight(0xcccccc, 0.5);
 			scene.add(ambientLight);
 			cssRenderer = new THREE.CSS3DRenderer();
@@ -75,6 +74,7 @@
 				antialias: true,
 				alpha: true
 			});
+
 			renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 			renderer.setSize(640, 480);
 			renderer.domElement.style.position = 'absolute'
@@ -132,7 +132,7 @@
 
 			// build markerControls
 			markerRoot1 = new THREE.Group();
-			markerRoot1.add(new Element(0, 0, 0, 0))
+			markerRoot1.add(new Element(0, 0, 0, Math.PI))
 
 			scene.add(markerRoot1);
 			let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
@@ -140,12 +140,14 @@
 			})
 
 			let geometry1;
+			console.log("Testing 1");
 			loader.load("./public/Water.gltf", (gltf) => {
 				geometry1 = gltf.scene.children[0]
 				geometry1.scale.set(0.005, 0.005, 0.005)
-				geometry1.position.y = -80;
-				geometry1.position.x = -20;
-				geometry1.position.z = 0;
+				//geometry1.position.y = -80;
+				//geometry1.position.x = -20;
+				//geometry1.position.z = 0;
+				geometry1.position.set(0, 0, 0)
 				let count = 0
 				setInterval(() => {
 					const texture = new THREE.TextureLoader().load("./images/textures/texture" + count + ".jpg");
@@ -161,7 +163,6 @@
 				//geometry1.rotation.y = 0.5;
 				markerRoot1.add(geometry1);
 			});
-			console.log(markerRoot1)
 			/*let material1 = new THREE.MeshNormalMaterial({
 				transparent: true,
 				opacity: 0.5,
@@ -183,7 +184,7 @@
 
 		function render() {
 			renderer.render(scene, camera);
-			cssRenderer.render(scene,camera);
+			cssRenderer.render(scene, camera);
 
 		}
 
