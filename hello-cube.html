@@ -59,6 +59,7 @@
 			return object;
 
 		}
+
 		function initialize() {
 			const container = document.getElementById('container');
 			scene = new THREE.Scene();
@@ -161,8 +162,10 @@
 				}, 100)
 				//geometry1.rotation.y = 0.5;
 				markerRoot1.add(geometry1);
+				geometry1.position.set(0, 1.25 / 2, 0)
+
 			});
-			geometry1.position.set(0, 1.25/2, 0)
+
 
 			/*let material1 = new THREE.MeshNormalMaterial({
 				transparent: true,
