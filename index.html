@@ -49,10 +49,10 @@
 
     }
 
-    .box:hover {
+    /*  .box:hover {
         opacity: 1;
         background-color: blue;
-    }
+    }*/
 </style>
 
 <body style="margin: 0px; overflow: hidden;">
@@ -73,12 +73,11 @@
                 this.dtsum = 0;
             },
             update: function () {
-
                 var per32Filled = this.glNo
                 let material = this.el.getObject3D("mesh").material;
                 this.el.getObject3D("mesh").rotation.x = Math.PI / 2
                 const chara = new Image();
-                chara.src = "images/textures/texture"+this.glNo+".jpg";
+                chara.src = "images/textures/texture" + this.glNo + ".jpg";
                 chara.onload = () => {
                     this.context.drawImage(chara, 0, 0);
                     if (!material.map)
@@ -86,13 +85,11 @@
                     else
                         material.map.needsUpdate = true;
                 };
-                document.getElementById("topLeveler").object3D.position.z = 0.508 - (1/32)*per32Filled;
-                document.getElementById("bottomLeveler").object3D.position.z = 0.508 - (1/32)*per32Filled;
-                document.getElementById("floatingText").object3D.position.z = 0.45 - (1/32)*per32Filled;
-                document.getElementById("floatingText").setAttribute("text", "value", "Peso: "+per32Filled*674+"kg");
+                document.getElementById("topLeveler").object3D.position.z = 0.508 - (1 / 32) * per32Filled;
+                document.getElementById("bottomLeveler").object3D.position.z = 0.508 - (1 / 32) * per32Filled;
+                document.getElementById("floatingText").object3D.position.z = 0.45 - (1 / 32) * per32Filled;
+                document.getElementById("floatingText").setAttribute("text", "value", "Peso: " + per32Filled * 674 + "kg");
                 //console.log(document.getElementById("floatingText").object3D.position.z)
-
-
             },
             tick: function (t, dt) {
                 this.dtsum += dt;
@@ -114,7 +111,7 @@
             init: function () {
                 console.log("commentBox init");
                 this.dtsum = 0;
-                this.el.addEventListener('click', (ev, target) => {
+                this.el.addEventListener('mouseenter', (ev, target) => {
                     const intersectedElement = ev && ev.detail && ev.detail.intersectedEl;
                     if (this.el && intersectedElement === this.el) {
                         const objectId = this.el.id;
@@ -193,7 +190,7 @@
             id="animated-marker" type="pattern" url="data/hiro.patt">
 
             <a-cylinder id="aaa" position="0 0.5 0" radius="0.5"
-                material="src: #myCanvas; transparent: true; opacity: 0.95;" canvas-texture>
+                material="src: #myCanvas; transparent: true; opacity: 0.25;" canvas-texture>
             </a-cylinder>
             <a-cone rotation="90 0 0" position="0 0.5 0.75" radius="0.5" scale="0.5 0.5 0.5" material="opacity: 0.95;">
             </a-cone>
@@ -205,8 +202,9 @@
             <a-box position="0.4 0.2 1" radius="0.5" scale="0.125 0.125 1"></a-box>
             <a-box position="-0.4 0.2 1" radius="0.5" scale="0.125 0.125 1"></a-box>
 
-            <a-circle radius="0.6" color="brown" id="topLeveler" position="0 0.5 0.508" ></a-circle>
-            <a-circle radius="0.6" color="brown" id="bottomLeveler" rotation="0 180 0" position="0 0.5 0.508"></a-circle>
+            <a-circle radius="0.6" color="brown" id="topLeveler" position="0 0.5 0.508"></a-circle>
+            <a-circle radius="0.6" color="brown" id="bottomLeveler" rotation="0 180 0" position="0 0.5 0.508">
+            </a-circle>
 
             <!-- BASE -->
             <a-box rotation="0 0 90" position="0 0.57 0.56" radius="0.5" scale="0.8 0.93 0.125"></a-box>
@@ -214,8 +212,8 @@
             <a-entity id="arComment" htmlembed="ppu:256" class="screen" commentbox scale="1 1 1" position="1.2 0.5 -0.7"
                 rotation="270 0 0">
             </a-entity>
-            <a-text id="floatingText" color="black" scale="0.4 0.4 0.4" position="0 1.2 1"
-                text="value:Peso: 30kg" rotation="270 0 0">
+            <a-text id="floatingText" color="black" scale="0.4 0.4 0.4" position="0 1.2 1" text="value:Peso: 30kg"
+                rotation="270 0 0">
             </a-text>
 
 
@@ -227,7 +225,7 @@
 
     </a-scene>
     <div class="topright">
-        <button class="btn"  onclick="toggleStickyComments()">Afixar</button>
+        <button class="btn" onclick="toggleStickyComments()">Afixar</button>
         <div style="display: none;" id="staticComments">
 
         </div>
