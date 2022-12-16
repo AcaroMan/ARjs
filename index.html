@@ -4,6 +4,9 @@
 <script src="js/aframe.min.js"></script>
 <script src="js/aframe-ar.js"></script>
 <script src="js/build.js">  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"
+    integrity="sha512-tc5xpAPaQDl/Uxd7ZVbV66v94Lys0IefMJSdlABPuzyCv0IXmr9TkqEQvZiWKRoXMSlP5YPRwpq2a+v5q2uzMg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
 
 <style>
@@ -160,6 +163,26 @@
             }
         });
 
+        const client = mqtt.connect("ws://20.82.150.246:9001", this.options)
+        // console.log("Teste")
+        client.on('connect', () => {
+            console.log('Connection succeeded!')
+            let uri = window.location.href.split('?')[1].split('=')[1];
+            client.subscribe('twin/' + uri, function (err) {
+                if (!err) {
+                    // console.log("Subscribed")
+                }
+            })
+        })
+        client.on('error', error => {
+            console.log('Connection failed', error)
+        })
+        client.on('message', (topic, message) => {
+            if (message.toString() >= 0 && message.toString() <= 100) {
+                this.targetTime = (message.toString() / 100) * 1.25
+            }
+            document.getElementById('toggleBtn').innertext = message.toString() !== 0 ? "Close" : "Open"
+        })
         /*AFRAME.registerComponent('markerhandler', {
 
             init: function () {
