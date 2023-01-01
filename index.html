@@ -7,6 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"
     integrity="sha512-tc5xpAPaQDl/Uxd7ZVbV66v94Lys0IefMJSdlABPuzyCv0IXmr9TkqEQvZiWKRoXMSlP5YPRwpq2a+v5q2uzMg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"
+    integrity="sha512-QTnb9BQkG4fBYIt9JGvYmxPpd6TBeKp6lsUrtiVQsrJ9sb33Bn9s0wMQO9qVBFbPX3xHRAsBHvXlcsrnJjExjg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
 
 <style>
@@ -61,6 +64,38 @@
 <body style="margin: 0px; overflow: hidden;">
     <script>
         var areCommmentsSticky = false;
+        var hasConnected = false;
+        const client = mqtt.connect("ws://20.82.150.246:9001", {
+            clean: true,
+            connectTimeout: 4000,
+            clientId: ((Math.random() + 1) * new Date().getTime()).toString(36).substring(2),
+            username: 'prod',
+            password: 'qQ6LhNpoErB1S6qV',
+        })
+        var keypair = {};
+        var quantity = 0;
+        window.location.href.split('?')[1].split('&').forEach((e) => {
+            keypair[e.split('=')[0]] = e.split('=')[1]
+        })
+        client.on('connect', () => {
+            console.log('Connection succeeded!')
+            client.subscribe('realtime/edgenode/+/controller/+/thing/' + keypair.quantity, function (err) {
+                if (!err) {
+                    // console.log("Subscribed")
+                }
+            })
+
+        })
+        client.on('error', error => {
+            console.log('Connection failed', error)
+        })
+        client.on('message', (topic, message) => {
+            if (JSON.parse(message.toString()).value >= 0 && JSON.parse(message.toString()).value <= 100) {
+                quantity = Math.floor(((JSON.parse(message.toString()).value) / 100) * 32)
+            }
+            //document.getElementById('toggleBtn').innertext = message.toString() !== 0 ? "Close" : "Open"
+        })
+
         AFRAME.registerComponent('canvas-texture', {
             init: function () {
                 this.canvas = document.querySelector("#myCanvas");
@@ -76,11 +111,11 @@
                 this.dtsum = 0;
             },
             update: function () {
-                var per32Filled = this.glNo
+                var per32Filled = quantity
                 let material = this.el.getObject3D("mesh").material;
                 this.el.getObject3D("mesh").rotation.x = Math.PI / 2
                 const chara = new Image();
-                chara.src = "images/textures/texture" + this.glNo + ".jpg";
+                chara.src = "images/textures/texture" + quantity + ".jpg";
                 chara.onload = () => {
                     this.context.drawImage(chara, 0, 0);
                     if (!material.map)
@@ -92,17 +127,11 @@
                 document.getElementById("bottomLeveler").object3D.position.z = 0.508 - (1 / 32) * per32Filled;
                 document.getElementById("floatingText").object3D.position.z = 0.45 - (1 / 32) * per32Filled;
                 document.getElementById("floatingText").setAttribute("text", "value", "Peso: " + per32Filled * 674 + "kg");
-                //console.log(document.getElementById("floatingText").object3D.position.z)
             },
             tick: function (t, dt) {
                 this.dtsum += dt;
                 if (this.dtsum >= 100) {
                     this.dtsum = 0;
-                    if (this.glNo >= 32) {
-                        this.glNo = 0;
-                    } else {
-                        this.glNo += 1;
-                    }
                     this.update();
                 }
             }
@@ -112,44 +141,37 @@
                 'target': { type: 'selector' },
             },
             init: function () {
-                console.log("commentBox init");
                 this.dtsum = 0;
-                this.el.addEventListener('mouseenter', (ev, target) => {
-                    const intersectedElement = ev && ev.detail && ev.detail.intersectedEl;
-                    if (this.el && intersectedElement === this.el) {
-                        const objectId = this.el.id;
-                        console.log(`click event on ${objectId} fired`);
-                        window.location.href = './event_page.html';
-                    }
-                })
             },
             update: function () {
                 var div1 = document.createElement("div");
                 div1.setAttribute("class", "box");
-                console.log("commentBox update");
-
-                fetch("https://6373fcb9716c2e1916557b6d.mockapi.io/messages").then((response) => {
-                    return response.json();
-                }).then((data) => {
-                    data.forEach((message) => {
+                axios.get("http://smartsilos.northeurope.cloudapp.azure.com/api/silo/" + keypair.silo + "/notes", { headers: { 'Authorization': "Bearer " + keypair.token } }).then((response) => {
+                    response.data.data.notes.forEach((note) => {
                         var div2 = document.createElement("div");
                         div2.style.borderBottom = "1px dashed black";
                         div2.setAttribute("class", "message");
-                        div2.innerHTML = "<h3>" + message.title + "</h3><p>" + message.message + "</p>";
+                        div2.innerHTML = "<h3>" + note.note + "</h3><p style='font-size:15px;color:#4d4d4d'><b>"+note.created_at+"</b></p>";
+                        div2.style.paddingLeft = "10px";
                         div1.appendChild(div2);
                         var staticDiv = document.getElementById("staticComments")
                         staticDiv.appendChild(div1);
                         staticDiv.innerHTML = div1.innerHTML;
                         staticDiv.setAttribute("class", "box");
-                    });
-                    //getFirstElementOf this.el
+                    })
                     this.el.innerHTML = "";
                     this.el.appendChild(div1);
+                }).catch(function (error) {
+                    console.log(error);
                 });
+
                 if (div1.childElementCount == 0) {
                     var div2 = document.createElement("div");
                     div2.innerHTML = "<h3>Não existem Comentários</h3>";
                 }
+
+
+
 
             },
 
@@ -159,45 +181,16 @@
                     this.dtsum = 0;
                     this.update();
                 }
+
                 this.el.setAttribute("visible", !areCommmentsSticky);
             }
         });
 
-        const client = mqtt.connect("ws://20.82.150.246:9001", this.options)
-        // console.log("Teste")
-        client.on('connect', () => {
-            console.log('Connection succeeded!')
-            let uri = window.location.href.split('?')[1].split('=')[1];
-            client.subscribe('twin/' + uri, function (err) {
-                if (!err) {
-                    // console.log("Subscribed")
-                }
-            })
-        })
-        client.on('error', error => {
-            console.log('Connection failed', error)
-        })
-        client.on('message', (topic, message) => {
-            if (message.toString() >= 0 && message.toString() <= 100) {
-                this.targetTime = (message.toString() / 100) * 1.25
-            }
-            document.getElementById('toggleBtn').innertext = message.toString() !== 0 ? "Close" : "Open"
-        })
-        /*AFRAME.registerComponent('markerhandler', {
+        setInterval(() => {
+            client.publish('realtime/edgenode/00000001/controller/00000001/thing/' + keypair['quantity'], JSON.stringify({ value: (Math.random() * 100).toString() }))
 
-            init: function () {
-                const animatedMarker = document.querySelector("#animated-marker");
-                const aEntity = document.querySelector("#aaa");
-                console.log(aEntity);
-                // every click, we make our model grow in size :)
-                animatedMarker.addEventListener('click', function (ev, target) {
-                    const intersectedElement = ev && ev.detail && ev.detail.intersectedEl;
-                    if (aEntity && intersectedElement === aEntity) {
-                        console.log("a")
-                    }
-                });
-            }
-        });*/
+        }, 1000)
+
         function toggleStickyComments() {
             document.getElementById("staticComments").style.display = areCommmentsSticky ? "none" : "block";
             areCommmentsSticky = !areCommmentsSticky;
