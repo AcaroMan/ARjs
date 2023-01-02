@@ -93,7 +93,6 @@
             if (JSON.parse(message.toString()).value >= 0 && JSON.parse(message.toString()).value <= 100) {
                 quantity = Math.floor(((JSON.parse(message.toString()).value) / 100) * 32)
             }
-            //document.getElementById('toggleBtn').innertext = message.toString() !== 0 ? "Close" : "Open"
         })
 
         AFRAME.registerComponent('canvas-texture', {
