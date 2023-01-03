@@ -68,6 +68,7 @@
         const client = mqtt.connect("ws://20.82.150.246:9001", {
             clean: true,
             connectTimeout: 4000,
+            rejectUnauthorized: false,
             clientId: ((Math.random() + 1) * new Date().getTime()).toString(36).substring(2),
             username: 'prod',
             password: 'qQ6LhNpoErB1S6qV',
@@ -150,7 +151,7 @@
                         var div2 = document.createElement("div");
                         div2.style.borderBottom = "1px dashed black";
                         div2.setAttribute("class", "message");
-                        div2.innerHTML = "<h3>" + note.note + "</h3><p style='font-size:15px;color:#4d4d4d'><b>"+note.created_at+"</b></p>";
+                        div2.innerHTML = "<h3>" + note.note + "</h3><p style='font-size:15px;color:#4d4d4d'><b>" + note.created_at + "</b></p>";
                         div2.style.paddingLeft = "10px";
                         div1.appendChild(div2);
                         var staticDiv = document.getElementById("staticComments")
