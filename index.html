@@ -146,7 +146,7 @@
             update: function () {
                 var div1 = document.createElement("div");
                 div1.setAttribute("class", "box");
-                axios.get("http://smartsilos.northeurope.cloudapp.azure.com/api/silo/" + keypair.silo + "/notes", { headers: { 'Authorization': "Bearer " + keypair.token } }).then((response) => {
+                axios.get("https://smartsilos.northeurope.cloudapp.azure.com/api/silo/" + keypair.silo + "/notes", { headers: { 'Authorization': "Bearer " + keypair.token } }).then((response) => {
                     response.data.data.notes.forEach((note) => {
                         var div2 = document.createElement("div");
                         div2.style.borderBottom = "1px dashed black";
