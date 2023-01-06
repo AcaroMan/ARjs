@@ -169,12 +169,7 @@
                     var div2 = document.createElement("div");
                     div2.innerHTML = "<h3>Não existem Comentários</h3>";
                 }
-
-
-
-
             },
-
             tick: function (t, dt) {
                 this.dtsum += dt;
                 if (this.dtsum >= 10000) {
@@ -186,10 +181,6 @@
             }
         });
 
-        setInterval(() => {
-            client.publish('realtime/edgenode/00000001/controller/00000001/thing/' + keypair['quantity'], JSON.stringify({ value: (Math.random() * 100).toString() }))
-
-        }, 1000)
 
         function toggleStickyComments() {
             document.getElementById("staticComments").style.display = areCommmentsSticky ? "none" : "block";
